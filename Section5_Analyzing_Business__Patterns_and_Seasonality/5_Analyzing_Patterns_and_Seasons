@@ -1,0 +1,166 @@
+-- | 1. Analyzing Seasonality |
+-- RESULT:
+-- steady growth over time, but big hike for cyber monday and black griday
+-- will stock up more for next eyar
+-- STEP 1: group by months
+SELECT
+    YEAR(web_sess.created_at) year,
+    MONTH(web_sess.created_at) month,
+    COUNT(DISTINCT web_sess.website_session_id) AS sessions,
+    COUNT(DISTINCT orders.order_id) AS orders
+FROM
+    website_sessions web_sess
+    LEFT JOIN orders ON web_sess.website_session_id = orders.website_session_id
+WHERE
+    YEAR(web_sess.created_at) < '2013'
+GROUP BY
+    year,
+    month;
+
+-- STEP 2: group by weeks
+SELECT
+    MIN(DATE(web_sess.created_at)) week_start_date,
+    COUNT(DISTINCT web_sess.website_session_id) AS sessions,
+    COUNT(DISTINCT orders.order_id) AS orders
+FROM
+    website_sessions web_sess
+    LEFT JOIN orders ON web_sess.website_session_id = orders.website_session_id
+WHERE
+    YEAR(web_sess.created_at) < '2013'
+GROUP BY
+    WEEK(web_sess.created_at);
+
+-- | 2. Analyzing Business Patterns|
+-- Weekday traffic is busier during working hours of 9-5, so we should increase staff 
+-- for support team during those hours
+WITH daily_hourly_sessions AS (
+    SELECT
+        DATE(created_at) created_date,
+        WEEKDAY(created_at) AS wkday,
+        HOUR(created_at) hr,
+        COUNT(DISTINCT website_session_id) sessions
+    FROM
+        website_sessions web_sess
+    WHERE
+        web_sess.created_at BETWEEN '2012-09-15'
+        AND '2012-11-15'
+    GROUP BY
+        1,
+        2,
+        3
+    ORDER BY
+        hr
+)
+SELECT
+    hr,
+    AVG(
+        CASE
+            WHEN wkday = 0 THEN sessions
+            ELSE null
+        END
+    ) AS 'Monday',
+    AVG(
+        CASE
+            WHEN wkday = 1 THEN sessions
+            ELSE null
+        END
+    ) AS 'Tuesday',
+    AVG(
+        CASE
+            WHEN wkday = 2 THEN sessions
+            ELSE null
+        END
+    ) AS 'Wednesday',
+    AVG(
+        CASE
+            WHEN wkday = 3 THEN sessions
+            ELSE null
+        END
+    ) AS 'Thursday',
+    AVG(
+        CASE
+            WHEN wkday = 4 THEN sessions
+            ELSE null
+        END
+    ) AS 'Friday',
+    AVG(
+        CASE
+            WHEN wkday = 5 THEN sessions
+            ELSE null
+        END
+    ) AS 'Saturday',
+    AVG(
+        CASE
+            WHEN wkday = 6 THEN sessions
+            ELSE null
+        END
+    ) AS 'Sunday'
+FROM
+    daily_hourly_sessions
+GROUP BY
+    1;
+
+-- Version 2
+SELECT
+WHERE
+    DATEDIFF('2012-11-15', '2012-09-15') / 7 AS week_difference;
+
+GROUP BY
+    HOUR(web_sess.created_at)
+ORDER BY
+    hr;
+
+-- 7 week Diff + 1 Week for eack, so use 9 weeks to calcuate average
+SELECT
+    HOUR(web_sess.created_at) AS hr,
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 2 THEN website_session_id
+            ELSE null
+        END
+    ) / 9 AS 'Monday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 3 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Tuesday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 4 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Wednesday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 5 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Thursday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 6 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Friday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 7 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Saturday',
+    count(
+        CASE
+            WHEN DAYOFWEEK(web_sess.created_at) = 1 THEN 1
+            ELSE null
+        END
+    ) / 9 AS 'Sunday'
+FROM
+    website_sessions web_sess
+WHERE
+    web_sess.created_at > '2012-09-15'
+    AND web_sess.created_at < '2012-11-15'
+GROUP BY
+    HOUR(web_sess.created_at)
+ORDER BY
+    hr

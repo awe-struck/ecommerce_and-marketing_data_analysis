@@ -1,0 +1,255 @@
+-- | 1. Analzying Channel Portfolios |
+-- RERSULT
+-- b search is roughly a thrid of gsearch yet large enough volume 
+-- so we should actually care about imporving it
+SELECT
+    MIN(DATE(created_at)) AS week_start_date,
+    COUNT(DISTINCT website_session_id) AS sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN utm_source = 'gsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) gsearch_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN utm_source = 'bsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) bsearch_sessions
+FROM
+    website_sessions
+WHERE
+    created_at > '2012-08-22'
+    AND created_at < '2012-11-29'
+    AND utm_campaign = 'nonbrand'
+GROUP BY
+    WEEK(created_at);
+
+-- | 2. Comparing Channel Characteristics |
+-- compare Bsearch nonbrand to gsearch nonbrand
+-- compare values: of mobile traffic 
+-- where date august 22 to novbmenter 30
+-- RESULT
+-- mobile session trffic is very differnt between two sources
+-- so need to dig in deeper
+SELECT
+    utm_source,
+    COUNT(DISTINCT website_session_id) AS sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS mobile_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(DISTINCT website_session_id) AS mobile_sessions_pct
+FROM
+    website_sessions
+WHERE
+    utm_campaign = 'nonbrand'
+    AND utm_source IN ('gsearch', 'bsearch')
+    AND created_at > '2012-08-22'
+    AND created_at < '2012-11-30'
+GROUP BY
+    utm_source;
+
+-- | 3. Cross-Channel Bid Optimizaation |
+-- RESULT
+-- gserach has better conersion rate in desktop and mobile
+-- bid down bsearch since it underperforms in sessions AND perfromance
+SELECT
+    device_type,
+    utm_source,
+    COUNT(DISTINCT web_sess.website_session_id) AS sessions,
+    COUNT(DISTINCT orders.order_id) AS orders,
+    COUNT(DISTINCT orders.order_id) / COUNT(DISTINCT web_sess.website_session_id) AS sess_to_ord_CVR
+FROM
+    website_sessions web_sess
+    LEFT JOIN orders ON web_sess.website_session_id = orders.website_session_id
+WHERE
+    utm_campaign = 'nonbrand'
+    AND web_sess.created_at > '2012-08-22'
+    AND web_sess.created_at < '2012-09-18'
+GROUP BY
+    device_type,
+    utm_source;
+
+-- | 4. Analyzing Channel Portfolio Trends |
+-- RESULT
+-- b-serach droped a bit after the bid, but due to seasonality (holidays)
+-- BOTH sessions are down, but bsearch down significaltny
+--gsearch went down after black friday and cyber monday, bsearch even more
+SELECT
+    MIN(DATE(created_at)) AS week_start_date,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile'
+            AND utm_source = 'gsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS mobile_g_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile'
+            AND utm_source = 'bsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS mobile_b_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile'
+            AND utm_source = 'bsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'mobile'
+            AND utm_source = 'gsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS mobile_b_pct_of_g,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'desktop'
+            AND utm_source = 'gsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS dtop_g_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'desktop'
+            AND utm_source = 'bsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS dtop_b_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'desktop'
+            AND utm_source = 'bsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(
+        DISTINCT CASE
+            WHEN device_type = 'desktop'
+            AND utm_source = 'gsearch' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS dtop_b_pct_of_g
+FROM
+    website_sessions
+WHERE
+    utm_campaign = 'nonbrand'
+    AND created_at > '2012-11-04'
+    AND created_at < '2012-12-22'
+GROUP BY
+    WEEK(created_at);
+
+-- | 5. Analyzing Direct, Organic and Paid Traffic |
+-- RESULT 
+-- HAS BEEN STREADLY INCREAINGS
+-- STEP 1: find htpp_referal for Organic traffic
+SELECT
+    DISTINCT utm_campaign,
+    utm_source,
+    http_referer
+FROM
+    website_sessions
+WHERE
+    created_at < '2012-12-23';
+
+-- STEP 2: 
+WITH channels_sessions AS (
+    SELECT
+        website_session_id,
+        created_at,
+        CASE
+            WHEN utm_source IS NULL
+            AND http_referer IN (
+                'https://www.gsearch.com',
+                'https://www.bsearch.com'
+            ) THEN 'organic_session'
+            WHEN utm_source IS NULL
+            AND http_referer IS NULL THEN 'direct_session'
+            WHEN utm_source IS NOT NULL
+            AND utm_campaign = 'brand' THEN 'paid_brand'
+            WHEN utm_source IS NOT NULL
+            AND utm_campaign = 'nonbrand' THEN 'paid_nonbrand'
+        END AS channels,
+        utm_campaign,
+        utm_source,
+        http_referer
+    FROM
+        website_sessions
+    WHERE
+        created_at < '2012-12-23'
+)
+SELECT
+    YEAR(created_at) AS year,
+    MONTH(created_at) AS month,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_nonbrand' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS nonbrand_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_brand' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS brand_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_brand' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_nonbrand' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS brand_pct_nonbrand,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'organic_session' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS organic_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'organic_session' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_nonbrand' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS organic_pct_of_nonbrand,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'direct_session' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS direct_sessions,
+    COUNT(
+        DISTINCT CASE
+            WHEN channels = 'direct_session' THEN website_session_id
+            ELSE NULL
+        END
+    ) / COUNT(
+        DISTINCT CASE
+            WHEN channels = 'paid_nonbrand' THEN website_session_id
+            ELSE NULL
+        END
+    ) AS direct_pct_of_nonbrand
+FROM
+    channels_sessions
+GROUP BY
+    year,
+    month

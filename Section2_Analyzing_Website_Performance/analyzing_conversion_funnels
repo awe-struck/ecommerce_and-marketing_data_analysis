@@ -1,0 +1,47 @@
+-- Updated the billing page, test if billing 2 is better than billing 1 page 
+-- Find % of sessiosn who place orders and compare from /billing to /thank-you and /billing2 to /thank-you
+-- WHERE all traffic, created_at> <find it>, '' created_at < '2012-11-10'
+-- Find when /billing-2 was implemented
+-- filter by website_session_id > 25325
+-- RESULTS 62% order rate compared to 45% of old version. it is a success!
+-- monitor results for now and observe complete rollout of webpages
+SELECT
+    website_session_id,
+    website_pageview_id,
+    pageview_url,
+    created_at
+FROM
+    website_pageviews
+WHERE
+    pageview_url = '/billing-2'
+LIMIT
+    2;
+
+-- STEP 1: count sessions in each step of funnel
+CREATE TEMPORARY TABLE sessions_w_orders
+SELECT
+    web_pv.pageview_url,
+    COUNT(web_pv.website_session_id) as sessions,
+    COUNT(
+        CASE
+            WHEN orders.order_id IS NOT NULL THEN 1
+            ELSE NULL
+        END
+    ) as orders
+FROM
+    website_pageviews AS web_pv
+    INNER JOIN website_sessions web_sess ON web_pv.website_session_id = web_sess.website_session_id
+    LEFT JOIN orders ON web_sess.website_session_id = orders.website_session_id
+WHERE
+    web_pv.pageview_url IN ('/billing', '/billing-2')
+    AND web_pv.website_session_id > 25325
+    AND web_pv.created_at < '2012-11-10'
+GROUP BY
+    web_pv.pageview_url;
+
+-- STEP 2: 
+SELECT
+    *,
+    orders / sessions
+FROM
+    sessions_w_orders;
