@@ -15,9 +15,9 @@ You will analyze and optimize marketing channels, measure and test website conve
 ### The Objective 
 
 Use SQL to: 
-• Access and explore the Maven Fuzzy Factory database
-• Become the data expert for the company, and the go-to person for mission critical analyses
-• Analyze and optimize the business’ marketing channels, website, and product portfolio
+- Access and explore the Maven Fuzzy Factory database
+- Become the data expert for the company, and the go-to person for mission critical analyses
+- Analyze and optimize the business’ marketing channels, website, and product portfolio
 
 <br>
 
@@ -33,14 +33,16 @@ I worked with six related tables, which contained ecommerce and marketing data a
 - Order Item Refunds
 - Products
 
-Entity Relationship Diagram
+**Entity Relationship Diagram:**
+![image](https://github.com/user-attachments/assets/735d4efc-e154-4359-b09d-26eec08c7f2c)
 
-![alt text](image.png)
 
 
 <br>
 
 ***
+
+## Outline
 
 | # | Outline | Description |
 |---|---|---|
@@ -49,9 +51,8 @@ Entity Relationship Diagram
 | 3 | [Mid Course Project](Section3_Mid_Course_Project/3_summary_stats.sql) | Answering stakeholder questions, and preparing data for their upcoming board meeting. Find insights to craft a compelling narrative to show the growth of the company. |
 | 4 | [Analyzing Traffic Channels, Optimization and seasonality](Section4_Analyzing_Channels/4_Analyzing_Channels.sql) | Analyze where website traffic is coming from, grouped by channels. From those different traffic channels, compare their volume metrics by sessions and converstion rates. Then segment, and perform bid optimization based on top resutls. Adjust budget for top performing traffic channel group. Monitor these changes over time with trend analysis, and make changes accordingly. From this time-series analysis, make note of seasonaliity. |
 | 5 | [Analyzing Traffic Channels, Optimization and seasonality](Section5_Analyzing_Business__Patterns_and_Seasonality/5_Analyzing_Patterns_and_Seasons.sql) | Analyze where website traffic is coming from, grouped by channels. From those different traffic channels, compare their volume metrics by sessions and converstion rates. Then segment, and perform bid optimization based on top resutls. Adjust budget for top performing traffic channel group. Monitor these changes over time with trend analysis, and make changes accordingly. |
-| 6 | [Product Analysis](Section6_Product_Analysis/6_Product_Analysis.sql) | 
-Analyzing product-level sales, and exploring the impact of a product launch by conversion rate. Analyze cross-selling patterns of products, and perform conversion funnel analysis to monitor product conversions. Use refund rates to monitor the quality and satisfaction of a product |
-| 7 | [User Analysis](Section7_User_analysis/7_User_Analysis.sql) | Observe user behaviour, and repeat sessions. Identify ... |
+| 6 | [Product Analysis](Section6_Product_Analysis/6_Product_Analysis.sql) | Analyzing product-level sales, and exploring the impact of a product launch by conversion rate. Analyze cross-selling patterns of products, and perform conversion funnel analysis to monitor product conversions. Use refund rates to monitor the quality and satisfaction of a product |
+| 7 | [User Analysis](Section7_User_analysis/7_User_Analysis.sql) | Observe user behaviour, and repeat visits. Identify those repeat users and their behaviour  |
 
 
 
