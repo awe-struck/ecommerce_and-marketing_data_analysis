@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/c05894e6-dfa4-43c7-ad56-db251af8fa65)
 # Mid Course Project - Status Report
 
 ## The Situation
