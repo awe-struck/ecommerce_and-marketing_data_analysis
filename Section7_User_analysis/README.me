@@ -3,7 +3,150 @@
 ## Tasks
 
 
-### <Next Question Number>
+### 1. Identify Repeat Visit & Purchase Behaviour
+
+<Question image>
+
+
+<br>
+
+#### Query:
+```
+DROP TEMPORARY TABLE IF EXISTS user_session_count;
+
+CREATE TEMPORARY TABLE user_session_count
+SELECT
+    user_id,
+    CASE
+        WHEN is_repeat_session = 0 THEN COUNT(website_session_id) OVER(PARTITION BY user_id)
+        ELSE NULL
+    END user_session_count,
+    is_repeat_session
+FROM
+    website_sessions
+WHERE
+    created_at >= '2014-01-01'
+    AND created_at < '2014-11-01'
+ORDER BY
+    user_id;
+
+SELECT
+    CASE
+        WHEN t.user_session_count = 1 THEN t.user_session_count -1
+        WHEN t.user_session_count = 2 THEN t.user_session_count -1
+        WHEN t.user_session_count = 3 THEN t.user_session_count -1
+        WHEN t.user_session_count = 4 THEN t.user_session_count -1
+    END repeat_sessions,
+    COUNT(user_session_count) unique_customers
+FROM
+    user_session_count t
+WHERE
+    t.user_session_count IS NOT NULL
+GROUP BY
+    1
+ORDER BY
+    repeat_sessions;
+
+
+
+```
+
+<br>
+
+#### Result:
+
+
+
+- <insights>
+- <insights>
+
+
+<br>
+
+#### Stakeholder Response:
+
+<response Iimage>
+
+
+<br>
+<br>
+
+***
+
+### 2.
+
+<Question image>
+
+#### Steps:
+-<>
+
+<br>
+
+#### Query:
+```
+
+```
+
+<br>
+
+#### Result:
+
+<query results Image>
+
+- <insights>
+- <insights>
+
+
+<br>
+
+#### Stakeholder Response:
+
+<response Iimage>
+
+
+<br>
+<br>
+
+***
+
+### 3.
+
+<Question image>
+
+#### Steps:
+-<>
+
+<br>
+
+#### Query:
+```
+
+```
+
+<br>
+
+#### Result:
+
+<query results Image>
+
+- <insights>
+- <insights>
+
+
+<br>
+
+#### Stakeholder Response:
+
+<response Iimage>
+
+
+<br>
+<br>
+
+***
+
+
+### 4.
 
 <Question image>
 
