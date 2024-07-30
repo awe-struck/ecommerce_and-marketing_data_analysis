@@ -7,9 +7,6 @@
 
 <Question image>
 
-#### Steps:
--<>
-
 <br>
 
 #### Query:
