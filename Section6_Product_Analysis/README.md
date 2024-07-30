@@ -631,7 +631,7 @@ GROUP BY
 ![image](https://github.com/user-attachments/assets/43cc00fd-de47-4fa8-a554-f157d937ecaa)
 
 
-- The product mrfuzzy went down after inital improvements in septemnet 2013, and as expected, refund rates were bad in august and septemneter . New supplier is doing well so far
+- The product mrfuzzy went down after inital improvements in septemnet 2013, and as expected, refund rates were bad in August and September . New supplier is doing well so far
 
 
 <br>
