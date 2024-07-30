@@ -79,6 +79,58 @@ ORDER BY
 
 #### Query:
 ```
+DROP TEMPORARY TABLE IF EXISTS session_cnt_per_user;
+
+CREATE TEMPORARY TABLE session_cnt_per_user
+SELECT
+    user_id,
+    website_session_id,
+    created_at,
+    CASE
+        WHEN is_repeat_session = 0 THEN COUNT(website_session_id) OVER(PARTITION BY user_id)
+        ELSE NULL
+    END num_sessions
+FROM
+    website_sessions
+WHERE
+    created_at >= '2014-01-01'
+    AND created_at < '2014-11-01'
+ORDER BY
+    user_id,
+    created_at;
+
+DROP TEMPORARY table only_two_sessions;
+
+CREATE TEMPORARY table only_two_sessions
+SELECT
+    session_cnt_per_user.user_id,
+    website_sessions.website_session_id,
+    website_sessions.created_at as 'first_sess',
+    LEAD(website_sessions.created_at) OVER(PARTITION BY session_cnt_per_user.user_id) AS 'second_sess'
+FROM
+    session_cnt_per_user
+    INNER JOIN website_sessions ON session_cnt_per_user.user_id = website_sessions.user_id
+WHERE
+    num_sessions = 2
+ORDER BY
+    session_cnt_per_user.user_id,
+    session_cnt_per_user.created_at;
+
+WITH time_between_sessions AS (
+    SELECT
+        user_id,
+        DATEDIFF(second_sess, first_sess) time_between_visit
+    FROM
+        only_two_sessions
+    WHERE
+        second_sess IS NOT NULL
+)
+SELECT
+    MIN(time_between_visit) AS min_time_between_vists,
+    MAX(time_between_visit) AS max_time_between_vists,
+    AVG(time_between_visit) AS avg_time_between_vists
+FROM
+    time_between_sessions;
 
 ```
 
@@ -86,10 +138,10 @@ ORDER BY
 
 #### Result:
 
-<query results Image>
+![image](https://github.com/user-attachments/assets/54a588c8-b250-42c2-b3db-10b9fc636d21)
 
-- For same time period, find minimum, maximum and avergae time
--- between first and second sessions for customer who come back
+
+- - Will dig in deeper for insights, and segment to drill in further
 
 
 <br>
@@ -106,10 +158,8 @@ ORDER BY
 
 ### 3. Analyzing Repeat Channel Behaviour 
 
-<Question image>
+![image](https://github.com/user-attachments/assets/f9bd7687-4c8a-4f0f-a499-50523617c052)
 
-#### Steps:
--<>
 
 <br>
 
@@ -156,16 +206,18 @@ GROUP BY
 
 ![image](https://github.com/user-attachments/assets/beaa4273-886d-4d3e-ae8b-c1caa794abd4)
 
-
-- <insights>
-- <insights>
+- Roughly, a third of the traffic comes from paid (brand) while the rest comes naturally from organic search and direct visits.
+- paid-nonbrand and paid social have no repeat sessions
+- consider exploring further and segmenting non-repeat session groups for more insights
+- Also need to compare performance metrics to check how meaningful this traffic truly is
 
 
 <br>
 
 #### Stakeholder Response:
 
-<response Iimage>
+![image](https://github.com/user-attachments/assets/d5e84419-e5f2-415f-a5dc-0ed08a809830)
+
 
 
 <br>
@@ -176,10 +228,8 @@ GROUP BY
 
 ### 4.
 
-<Question image>
+![image](https://github.com/user-attachments/assets/9fe30a64-f766-4323-8c4d-4074560b0094)
 
-#### Steps:
--<>
 
 <br>
 
@@ -211,15 +261,15 @@ GROUP BY
 ![image](https://github.com/user-attachments/assets/bd9850a6-9c1b-4f84-8bf8-4d0852a5599e)
 
 
-- <insights>
-- <insights>
-
+- Repeat sessions have a 2% higher conversion rate and are thus more likey to convert
+- Take this into account when bidding on paid traffic
 
 <br>
 
 #### Stakeholder Response:
 
-<response Iimage>
+![image](https://github.com/user-attachments/assets/7562e1c2-d6e7-4237-95d7-a887d34053e2)
+
 
 
 <br>
