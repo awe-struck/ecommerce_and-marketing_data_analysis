@@ -35,10 +35,6 @@ GROUP BY
 ![image](https://github.com/user-attachments/assets/ffb28ef5-acb3-40d2-a7e6-85297779c8d4)
 
 
-- <insights>
-- <insights>
-
-
 <br>
 
 ![image](https://github.com/user-attachments/assets/234aeed3-4c09-404f-b3fa-10c13d3b504d)
@@ -230,7 +226,7 @@ GROUP BY
 
 ![image](https://github.com/user-attachments/assets/effcab7b-6bb2-48cf-87ae-ffffacbd9356)
 
--- perecntr of sessions from /products to /mrfuzzy went down after /lovebear lauch. However overall CVR is up .
+- percent of sessions from /products to /mrfuzzy went down after /lovebear lauch. However overall CVR is up.
 
 
 <br>
@@ -375,7 +371,7 @@ FROM
 
 ![image](https://github.com/user-attachments/assets/6f2fdc17-ab63-440d-b1f2-bf5c94ebe8cb)
 
--  overall, CTR has increased from seond product
+- Overall, CTR has increased from seond product lauch from the /products page. Love bear has the better CTR to /cart page, and comparable rates in the rest of the funnel
 
 <br>
 
@@ -393,10 +389,8 @@ FROM
 
 ### 5. Cross-Sale Analysis
 
-<Question image>
+![image](https://github.com/user-attachments/assets/9d5047ea-c52c-4cdb-a3a8-1d0d1008c1c7)
 
-#### Steps:
--<>
 
 <br>
 
@@ -473,13 +467,14 @@ GROUP BY
 
 ![image](https://github.com/user-attachments/assets/c00b6d21-f9d1-43fe-89a7-d1aa300d0bbe)
 
-- CTR did not go dwon, everything else slight ly went up. Monitro it
+- CTR did not go down, but everything else went slightly went up. Monitor for any changes over time
 
 <br>
 
 #### Stakeholder Response:
 
-<response Iimage>
+![image](https://github.com/user-attachments/assets/8c79a7c1-af9d-44df-8928-c9e5d508e640)
+
 
 
 <br>
@@ -489,7 +484,7 @@ GROUP BY
 
 ### 6. Product Portfolio Expansion
 
-<Question image>
+![image](https://github.com/user-attachments/assets/12856814-a24d-4855-8422-b9d7262c43cc)
 
 <br>
 
@@ -531,7 +526,8 @@ GROUP BY
 
 #### Stakeholder Response:
 
-<response Iimage>
+![image](https://github.com/user-attachments/assets/e583db17-47f1-4e7b-a3ed-798f3794dce2)
+
 
 
 <br>
@@ -539,12 +535,11 @@ GROUP BY
 
 ***
 
-### 7.
+### 7. Product Refund Rates
 
-<Question image>
+![image](https://github.com/user-attachments/assets/a8fc18f4-28c6-4bda-a505-5dc3f80299df)
 
-#### Steps:
--<>
+
 
 <br>
 
@@ -643,7 +638,8 @@ GROUP BY
 
 #### Stakeholder Response:
 
-<response Iimage>
+![image](https://github.com/user-attachments/assets/48f187e1-6e08-4506-9947-c726bb72b557)
+
 
 
 <br>
