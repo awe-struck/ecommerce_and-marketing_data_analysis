@@ -226,7 +226,7 @@ GROUP BY
 ***
 
 
-### 4.
+### 4. Analyzing New and Repeat Conversion Rates
 
 ![image](https://github.com/user-attachments/assets/9fe30a64-f766-4323-8c4d-4074560b0094)
 
